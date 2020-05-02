@@ -1,21 +1,25 @@
-class VeterinaryView{
-    #raceTrack = null;                      // sadece bu nesnenin görebilecegi bir degisken
-    
-    constructor(pRaceTrack){
-        this.#raceTrack = pRaceTrack;
-    }
-
-    /**
-     * toString methodu JS tarafindan bilinen özel metoddur. Bu nesne bir string ile toplandiginda veya Template literal icinde kullanildiginda.
-     * JS otomatik olarak toString methôdunu kullanir.
-     * Bu nesnenin toString metodu yaris pistindi ve icindeki arabalari html'e cevirerek geri dönderir.
+class VeterinaryView {
+       /**
+     * 
+     * @param {*} pRapeutic Manager clasından gelen parametrelerın ekrana yansımasını yaptırıyoruz mılısanıyeler ıcınde tekrarlanan bır sayfa
+     * yenıleme ıslemı mevcuttur
+     * Burada her tedavı olan hayvanı ekrana sımule edıyoruz
      */
-    toString(){
-        let cars = this.#raceTrack.getCars().map(car => `${new CarView(car)}`).join("");
-
-        return `<main class="race-track"
-                       style="width:${this.#raceTrack.getTrackDistance()}px">
-                    ${cars}
-                </main>`;
+    rapeuticViews(pRapeutic) {
+        let table = `<h1 class="text-center">Veteriner Niyazi Gül</h1>`
+        table +=`<table  class="table">`;
+        table += `<thead>`;
+        table += `<tr><th>Doktor Adı</th><th>Fiyat</th><th>Hayvan Cinsi</th><th>Hayvan Resmi</th></tr>`;
+        table += `</thead>`;
+        pRapeutic.map((pRapeutic) => {
+            table += `<tr>
+                <td>${pRapeutic.DoctorName}</td>
+                <td>${pRapeutic.Price}</td>
+                <td>${pRapeutic.AnimalName}</td>
+                <td><img src="${pRapeutic.img}"></td>
+                </tr>`;
+        }).join("");
+        table += `</table>`;
+        document.querySelector("#screnRecord").innerHTML = table;
     }
 }

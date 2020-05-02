@@ -1,101 +1,161 @@
+/**
+ * Kedi 1     Niyazi Cabbar
+ * Hamsi 2     Niyazi Eleni
+ * Karga 3     Yasemin
+ */
+/**
+ * Bu class aracılığyla Doktor ve Hayvan Claslarımız iletişim kurmakta ve durumlarına gore listeleme işlemi icin 
+ *  view kalsorundekı js dosyalarına ıletılmektedir
+ */
 class VeterinaryManager {
     animalList = [];
-    catParse = []; //Animaltype 1
-    fishParse = []; //Animaltype 2
-    ravenParse = []; //Animaltype 3
-    rapeutic = []; //Tedavi olan Hayvanların Dizisi
-    dayTimer = null;
-    maxLimit = 40;
-    fishinterval = null;
-    catinterval = null;
-    raveninterval = null;
-    constructor() {
+    animalList2 = [];
+    rapeutic = []; //Tedavisi biten hastaların tutuldugu dizi
+    maxLimit = 30;
+    dayinterval = null; //set intervali sonlandırmak için kullandıgımız degısken adı
+    constructor(rapeuticViews, resultVeterinary, WaitAnimals) {
         this.createAnimal(Random.generateRandomNumber(10, this.maxLimit))
-        this.cat = new Cat;
         this.doctor = new DoctorManager
+        this.rapeuticViews = rapeuticViews;
+        this.resultVeterinary = resultVeterinary;
+        this.WaitAnimals = WaitAnimals;
+
     }
-    startDay() {
-        this.animalParse()
-        console.log(this.catParse)
-        console.log(this.fishParse)
-        console.log(this.ravenParse)
-        this.catTimer();
-        //this.fishTimer();
-        //this.ravenTimer();
-        setTimeout(() => {
-            clearInterval(this.fishinterval)
-            clearInterval(this.raveninterval)
-            clearInterval(this.catinterval)
-            console.log(this.rapeutic)
-        }, 9000);
-    }
+    /**
+     * 
+     * @param {animal} pNumber Animal Clasından gelen verilerin bir diziye push edilmesini sağlayan method
+     * Bu method aracılığyla hayvanlar olusturmaktayız. 
+     */
     createAnimal(pNumber) {
         for (let index = 0; index < pNumber; index++) {
             this.animalList.push(Animal.generator())
         }
+        console.log(this.animalList)
+        this.animalList2 = this.animalList
+        console.log(this.animalList2)
     }
-    animalParse() {
-        this.animalList.map((parse) => {
-            if (parse.animalType == 1) {
-                this.catParse.push("Kedi")
-            } else if (parse.animalType == 2) {
-                this.fishParse.push("Hamsi")
-            } else {
-                this.ravenParse.push("Karga")
+    /**
+     * 
+     * @param {*} pview Bu Metod aracılığyla sistemimiz başlamaktadır iöerisinde 3 adet zamanlayıcı bulunmaktadır
+     * 1 adet set interval zamanlayıcısı mevcut olup bu komut sayesinde sistem sürekli olarak kendini check etmekte ve herhangi bir değişiklik
+     * oldugunda DOM'a veriler gondererek sayfanın guncelnemesını saglamaktadır
+     * Settimeoutlara gelecek olursak bunlar sadece 1 kere calısan komutlar olup sistemi sonlandıracagımız zamanlar kulladnıgımız bit
+     * komut.Bu zamanlayıcı ıcerısınde de intervali durdurmak icin gerekli  bir metod calısmaktadır
+     * diğer settimeout ıcerısınde işlem bittikten sonra ekrana result edecegımız fonksıyonlar ıcın parametre gonderdıgımız fonksıyondur
+     */
+    startDay(pview) {
+        this.dayinterval = setInterval(() => {
+            this.doctors();
+            this.rapeuticViews(this.rapeutic);
+        }, 10);
+        setTimeout(() => {
+            clearInterval(this.dayinterval)
+        }, 18000);
+        setTimeout(() => {
+            this.resultVeterinary(this.doctor.doctorList);
+            this.WaitAnimals(this.animalList, this.animalList2);
+        }, 23000);
+    }
+    /**
+     * 
+     * @param {*} pDoctor hayvanları filtreliyoruz ve durumu doktorla eslesen hayvanları ve doctorları methosların ıscıne gonderıyorus
+     * burada su sorgulama yapılıyor status degıstırılıor bu sayede dolu olan doktora hayvan eslestırmesı yapılmıyoe
+     * nıyazı beyın aldıgı hayvan sayısı 2 oldugu ııcın kosul ıcerısınde bir veya durumu ekleyerek nıyazı beyın uygun hayvanlardan hangısı bosta
+     * ıse ılgılenmesını saglamıs oluyoruz.
+     */
+    animal(pDoctor) {
+        this.animalList.filter((pAnimals) => {
+
+            if (((pDoctor.status == true) && (pDoctor.expertise[1] == pAnimals.animalType)) || ((pDoctor.status == true) && (pDoctor.expertise[0] == pAnimals.animalType))) {
+                pDoctor.status = !pDoctor.status;
+                if (pAnimals.animalType == 3) {
+                    this.raven(pDoctor, pAnimals);
+                }
+                if (pAnimals.animalType == 1) {
+                    this.cats(pDoctor, pAnimals);
+                }
+                if (pAnimals.animalType == 2) {
+                    this.fish(pDoctor, pAnimals);
+                }
             }
         })
     }
-    catTimer() {
-        this.catinterval = setInterval(() => {
-            this.doctor.doctorList.map((pDr) => {
-                if ((pDr.expertise===0)||(pDr.expertise===1)&& (!this.isEmpty(this.catParse))&&(pDr.status == false)) {
-                   
-                    let queue=this.dequeue(this.catParse)
-                    pDr.animal.push(queue)
-                    this.rapeutic.push(queue)
-                }
-            })
-            console.log(this.catParse)
-            console.log(this.doctor.doctorList)
-        }, 2000)
+    /**
+     * doctorları maplayerek anımal metoduna fdoktorları gonderıyoruz
+     * yada tam tersı olarak dusunursenız durumu eslesen hayvanı  doktaora veriyoruz.
+     */
+    doctors() {
+        this.doctor.doctorList.map((pdoctor) => {
+            this.animal(pdoctor);
+        })
     }
- /*    fishTimer() {
-        this.fishinterval = setInterval(() => {
-            this.doctor.doctorList.map((pDr) => {
-                if ((pDr.expertise === 2) && (!this.isEmpty(this.fishParse) && (!pDr.status == false))) {
-                    pDr.animal.push(this.dequeue(this.fishParse))
-                    this.rapeutic.push(this.dequeue(this.fishParse))
-                }
+
+/**
+ * 
+ * @param {*} pDoctor   
+ * @param {*} pAnimals 
+ * Bu Metodlar ıcerısınde her hayvan ıcın belırlenen tımer calısır ve durum kontrolunu tersı seklıne getırır 
+ * queue metodları ıle  tedavı edılene push ederken bir yadnada genel lısteden tedavı olan hayvanları dequeue yapıyoruz 
+ */
+    cats(pDoctor, pAnimals) {
+        setTimeout(() => {
+            let status = !pDoctor.status;
+            pDoctor.status = status;
+            //this.rapeutic.push({DoctorName:pDoctor.name,AnimalName:pAnimals.animalType,Price:100})
+            this.enqueue({
+                DoctorName: pDoctor.name,
+                AnimalName: pAnimals.animalType,
+                Price: 100,
+                img: "./img/kedi.png"
             })
-            console.log(this.doctor.doctorList)
-        }, 3000)
+            this.dequeue(this.animalList)
+            pDoctor.price += 100;
+            pDoctor.animal.push("Kedi")
+        }, 7000);
     }
-    ravenTimer() {
-        this.raveninterval = setInterval(() => {
-            this.doctor.doctorList.map((pDr) => {
-                if ((pDr.expertise === 3) && (!this.isEmpty(this.ravenParse) && (pDr.status == false))) {
-                    
-                    pDr.animal.push(this.dequeue(this.ravenParse))
-                    this.rapeutic.push(this.dequeue(this.ravenParse))
-                }
+    fish(pDoctor, pAnimals) {
+        setTimeout(() => {
+            let status = !pDoctor.status;
+            pDoctor.status = status;
+            //this.rapeutic.push({DoctorName:pDoctor.name,AnimalName:pAnimals.animalType,Price:40})
+            this.enqueue({
+                DoctorName: pDoctor.name,
+                AnimalName: pAnimals.animalType,
+                Price: 40,
+                img: "./img/hamsi.png"
             })
-        }, 5000)
-    } */
-
-
-
-
-
-
-
-
+            this.dequeue(this.animalList)
+            pDoctor.price += 40;
+            pDoctor.animal.push("Hamsi")
+        }, 3000);
+    }
+    raven(pDoctor, pAnimals) {
+        setTimeout(() => {
+            let status = !pDoctor.status;
+            pDoctor.status = status;
+            //this.rapeutic.push({DoctorName:pDoctor.name,AnimalName:pAnimals.animalType,Price:150})
+            this.enqueue({
+                DoctorName: pDoctor.name,
+                AnimalName: pAnimals.animalType,
+                Price: 150,
+                img: "./img/karga.png"
+            })
+            this.dequeue(this.animalList)
+            pDoctor.price += 150;
+            pDoctor.animal.push("Karga")
+        }, 5000);
+    }
+    /**
+     * 
+     * @param {*} element Aşağıdaki metodlar Queue Metodları.İşlevlerini tam olarak yerine getirememektedirler
+     * bunun sebebi tam manasıyla dogru bir kullanım uygulamıyor oluşumdan kaynaklanıyor
+     */
     enqueue(element) {
-        // adding element to the queue 
-        this.animalList.push(element);
+        this.rapeutic.push(element);
     }
     dequeue(pData) {
         if (this.isEmpty(pData))
-            return "Underflow";
+            return "";
         return pData.shift();
     }
     isFull(maxLimit, pData) {

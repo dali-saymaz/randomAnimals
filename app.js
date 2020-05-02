@@ -43,13 +43,8 @@ Gibi Niyazi Gül beye yardimci olabilecek istatsitiki bilgilerin gösterimi yapi
     edip ekrANA bir cıktı vemrsini saglamalıyız.
     ""
  */
-let k=new VeterinaryManager;
-let kdoc=new DoctorManager;
-k.startDay();
-console.log(doctor)
-console.log(k.animalList)
-console.log(kdoc.doctorList)
-document.querySelector("veterinary").innerHTML=`
-${doctor}<br><br>
-${k.animalList}
-`
+let viewController = new VeterinaryView;
+let resultController = new ResultViews;
+new VeterinaryManager(
+   viewController.rapeuticViews,resultController.resultVeterinary,resultController.WaitAnimals
+).startDay();
