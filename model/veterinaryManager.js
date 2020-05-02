@@ -9,9 +9,9 @@
  */
 class VeterinaryManager {
     animalList = [];
-    animalList2 = [];
+    animalList2 = null;
     rapeutic = []; //Tedavisi biten hastaların tutuldugu dizi
-    maxLimit = 30;
+    maxLimit = 25;
     dayinterval = null; //set intervali sonlandırmak için kullandıgımız degısken adı
     constructor(rapeuticViews, resultVeterinary, WaitAnimals) {
         this.createAnimal(Random.generateRandomNumber(10, this.maxLimit))
@@ -19,7 +19,6 @@ class VeterinaryManager {
         this.rapeuticViews = rapeuticViews;
         this.resultVeterinary = resultVeterinary;
         this.WaitAnimals = WaitAnimals;
-
     }
     /**
      * 
@@ -30,9 +29,6 @@ class VeterinaryManager {
         for (let index = 0; index < pNumber; index++) {
             this.animalList.push(Animal.generator())
         }
-        console.log(this.animalList)
-        this.animalList2 = this.animalList
-        console.log(this.animalList2)
     }
     /**
      * 
@@ -44,6 +40,12 @@ class VeterinaryManager {
      * diğer settimeout ıcerısınde işlem bittikten sonra ekrana result edecegımız fonksıyonlar ıcın parametre gonderdıgımız fonksıyondur
      */
     startDay(pview) {
+        this.animalList2=this.animalList.map((animal)=>{
+            return animal
+        })
+        console.log(this.animalList);
+        console.log(this.animalList2);
+        
         this.dayinterval = setInterval(() => {
             this.doctors();
             this.rapeuticViews(this.rapeutic);

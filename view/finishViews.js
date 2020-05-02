@@ -24,7 +24,9 @@ class ResultViews {
     }
     WaitAnimals(pAnimals,pAnimals2) {
         let table = `<h2 class="text-center">Tedavi Olamayan Hayvanlar</h2>`
-        table +=`<h4 class="text-center">Toplam Hayvan Sayısı ${pAnimals2.length}</h4>`;
+        table +=`<h4 class="text-center">Toplam hayvan sayısı ${pAnimals2.length}</h4>`;
+        table +=`<h4 class="text-center">Tedavi Olanların sayısı${100-(pAnimals.length/pAnimals2.length*100)}%</h4>`;
+        table +=`<h4 class="text-center">Tedavi olamayan hayvan sayısı ${pAnimals.length}</h4>`;
         table +=`<table  class="table">`;
         table += `<thead>`;
         table += `<tr><th>Sahip Adı</th><th>Hayvan Cinsi</th><th>Yaşı</th></tr>`;
